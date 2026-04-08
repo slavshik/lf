@@ -263,6 +263,23 @@ func (sm styleMap) get(f *file) tcell.Style {
 		key = "ex"
 	}
 
+	// For executable files, check name/extension patterns first so devicons-style
+	// per-extension colors take precedence over the generic "ex" type code.
+	if key == "ex" {
+		if val, ok := sm.styles[f.Name()+"*"]; ok {
+			return val
+		}
+		if val, ok := sm.styles["*"+f.Name()]; ok {
+			return val
+		}
+		if val, ok := sm.styles[filepath.Base(f.Name())+".*"]; ok {
+			return val
+		}
+		if val, ok := sm.styles["*"+strings.ToLower(f.ext)]; ok {
+			return val
+		}
+	}
+
 	if val, ok := sm.styles[key]; ok {
 		if key == "di" && strings.HasPrefix(f.Name(), ".") {
 			if dotval, ok2 := sm.styles["hd"]; ok2 {

@@ -169,6 +169,21 @@ func (im iconMap) get(f *file) iconDef {
 		key = "ex"
 	}
 
+	if key == "ex" {
+		if val, ok := im.icons[f.Name()+"*"]; ok {
+			return val
+		}
+		if val, ok := im.icons["*"+f.Name()]; ok {
+			return val
+		}
+		if val, ok := im.icons[filepath.Base(f.Name())+".*"]; ok {
+			return val
+		}
+		if val, ok := im.icons["*"+strings.ToLower(f.ext)]; ok {
+			return val
+		}
+	}
+
 	if val, ok := im.icons[key]; ok {
 		return val
 	}
